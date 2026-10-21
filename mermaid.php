@@ -160,7 +160,8 @@ class MermaidPlugin extends Plugin
         }
 
         // Diagrams scroll sideways when too wide, and stay hidden until drawn so their text doesn't flash up.
-        // The .label rule undoes theme badge styles (such as Quark's capitals) on Mermaid's own "label" class.
+        // The .label rule undoes theme badge styles (such as Quark's capitals) on Mermaid's own "label" class, and
+        // label text (in a <p>) takes the label's colour rather than the theme's paragraph colour.
         // In dark mode, each diagram has a light copy kept off screen, which replaces it when printing.
         $css = <<<CSS
 .mermaid-diagram { margin: 1.5rem 0; overflow-x: auto; text-align: {$align}; }
@@ -169,6 +170,7 @@ class MermaidPlugin extends Plugin
   font-size: inherit; text-transform: none; line-height: inherit;
   padding: 0; background: none; border-radius: 0;
 }
+.mermaid-diagram .label p, .mermaid-print-copy .label p { color: inherit; }
 .mermaid-print-copy { position: absolute; left: -10000px; top: 0; visibility: hidden; }
 @media print {
   .mermaid-diagram.has-print-copy { display: none; }
