@@ -132,7 +132,34 @@ class MermaidPlugin extends Plugin
         // Insert (a length of 0 replaces nothing) before the last </body> only, in case the page shows HTML with
         // its own </body>
         $body_end = strripos($output, '</body>');
-        $this->grav->output = substr_replace($output, $this->pageAdditions(), $body_end, 0);
+        $output = substr_replace($output, $this->pageAdditions(), $body_end, 0);
+
+        // Hide the diagram code from the start, so it doesn't show while Mermaid loads. This goes before the
+        // first </head> (the page's own), as styles at the end of the page arrive too late.
+        $head_end = stripos($output, '</head>');
+        if ($head_end !== false) {
+            $output = substr_replace($output, $this->hideCodeStyle(), $head_end, 0);
+        }
+
+        $this->grav->output = $output;
+    }
+
+    /**
+     * Hides each ```mermaid code block (and a highlighting plugin's box around it) until it's drawn. Only when
+     * JavaScript is on (scripting: enabled), so without it the diagram's text still shows. Hidden rather than
+     * removed, so the space stays and the page moves less when the diagram appears.
+     */
+    protected function hideCodeStyle()
+    {
+        return <<<HTML
+<style>
+@media (scripting: enabled) {
+  pre:has(> code.language-mermaid), pre.language-mermaid,
+  .codesh-block:has(pre.language-mermaid), .code-toolbar:has(code.language-mermaid) { visibility: hidden; }
+}
+</style>
+
+HTML;
     }
 
     /**
