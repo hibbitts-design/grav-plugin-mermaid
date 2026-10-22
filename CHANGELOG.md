@@ -1,3 +1,9 @@
+# v0.9.2
+## 10/22/2026
+
+1. [](#improved)
+    * Docs link added to the blueprint, and the README's first example is now also shown as a drawn diagram
+
 # v0.9.1
 ## 10/22/2026
 
