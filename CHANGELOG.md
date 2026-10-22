@@ -1,5 +1,5 @@
 # v0.9.1
-## 10/21/2026
+## 10/22/2026
 
 1. [](#improved)
     * Diagram code is hidden while Mermaid loads, instead of briefly showing before each diagram is drawn
