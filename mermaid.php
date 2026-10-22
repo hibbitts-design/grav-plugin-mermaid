@@ -27,8 +27,9 @@ class MermaidPlugin extends Plugin
     // To update Mermaid:
     //   1. Replace js/mermaid.min.js with https://cdn.jsdelivr.net/npm/mermaid@<version>/dist/mermaid.min.js
     //   2. Change the version here and in the README's Credits, and add a CHANGELOG entry
-    //   3. Check examples/mermaid-test.md in light and dark mode, and printed; for a new major version, also
-    //      check that mermaid.run, data-processed and DIAGRAM_TYPES in js/mermaid-init.js still match Mermaid
+    //   3. Check examples/mermaid-demo.md and mermaid-test.md in light and dark mode, and printed; for a new
+    //      major version, also check that mermaid.run, data-processed and DIAGRAM_TYPES in js/mermaid-init.js
+    //      still match Mermaid
     const MERMAID_VERSION = '11.17.2';
 
     /**

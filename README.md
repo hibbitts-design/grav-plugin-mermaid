@@ -83,4 +83,4 @@ Mermaid is a large file, so it's only added to pages with a diagram.
 
 Includes [Mermaid](https://github.com/mermaid-js/mermaid) 11.17.2 by Knut Sveidqvist and contributors (MIT licence).
 
-`examples/mermaid-test.md` is a test page to check diagrams after an update.
+`examples/mermaid-demo.md` is the page behind the [online demo](https://demo.hibbittsdesign.org/grav-plugin-mermaid/), and `examples/mermaid-test.md` covers edge cases – together, they check diagrams after an update.

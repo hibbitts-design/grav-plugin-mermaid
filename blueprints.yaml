@@ -9,6 +9,7 @@ author:
   email: hello@hibbittsdesign.org
   url: https://hibbittsdesign.org
 homepage: https://github.com/paulhibbitts/grav-plugin-mermaid
+demo: https://demo.hibbittsdesign.org/grav-plugin-mermaid/
 keywords: mermaid, diagrams, flowcharts, charts, dark mode
 bugs: https://github.com/paulhibbitts/grav-plugin-mermaid/issues
 license: MIT
