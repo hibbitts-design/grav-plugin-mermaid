@@ -26,6 +26,13 @@ flowchart LR
 ```
 ````
 
+Which draws:
+
+```mermaid
+flowchart LR
+    A[Read] --> B[Reuse]
+```
+
 See the [Mermaid documentation](https://mermaid.js.org/intro/) for every diagram type. A diagram with a mistake shows an error box in its place.
 
 For screen readers, give each diagram a title and a short description (like an image's alt text):

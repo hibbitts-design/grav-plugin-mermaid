@@ -10,6 +10,7 @@ author:
   url: https://hibbittsdesign.org
 homepage: https://github.com/hibbitts-design/grav-plugin-mermaid
 demo: https://demo.hibbittsdesign.org/grav-plugin-mermaid/
+docs: https://github.com/hibbitts-design/grav-plugin-mermaid/blob/main/README.md
 keywords: mermaid, diagrams, flowcharts, charts, dark mode
 bugs: https://github.com/hibbitts-design/grav-plugin-mermaid/issues
 license: MIT
