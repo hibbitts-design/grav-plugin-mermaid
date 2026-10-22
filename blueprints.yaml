@@ -13,6 +13,8 @@ demo: https://demo.hibbittsdesign.org/grav-plugin-mermaid/
 keywords: mermaid, diagrams, flowcharts, charts, dark mode
 bugs: https://github.com/paulhibbitts/grav-plugin-mermaid/issues
 license: MIT
+compatibility:
+  grav: ['1.7', '2.0']
 
 dependencies:
   - { name: grav, version: '>=1.7.0' }
