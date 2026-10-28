@@ -1,3 +1,9 @@
+# v0.9.3
+## XX/XX/2026
+
+1. [](#bugfix)
+    * HTMX: diagrams now draw on pages swapped in with HTMX (such as Grav Helios Course Hub), not just on full page loads
+
 # v0.9.2
 ## 10/22/2026
 
