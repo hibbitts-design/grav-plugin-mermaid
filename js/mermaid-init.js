@@ -12,6 +12,10 @@
  *   look       – 'classic' or 'hand-drawn'
  *   font       – 'site' (the page's font) or 'mermaid' (Mermaid's own)
  *   width      – 'fit' (shrink to the content column) or 'natural' (full size, scrolling sideways when wide)
+ *   mermaidUrl – Mermaid's own script, loaded here when a page didn't include it (see start)
+ *
+ * On sites that swap pages in with HTMX (such as Helios with its HTMX setting on), diagrams in each swapped-in page
+ * are drawn too.
  */
 
 // Wrapped in a function that runs straight away, so its names can't clash with the theme's scripts
@@ -30,6 +34,8 @@
   var drawnDark = null;
   // The latest drawing, which the next one waits for
   var drawing = Promise.resolve();
+  // Whether mode changes are being watched (set up once, see drawAndWatch)
+  var watching = false;
 
   /**
    * Whether the page is showing dark mode right now.
@@ -213,17 +219,44 @@
   }
 
   function start() {
-    if (!window.mermaid || !settings) return;
+    if (!settings) return;
 
+    // Diagrams from a page swapped out with HTMX are gone; keep only those still on the page
+    diagrams = diagrams.filter(function (box) {
+      return box.isConnected;
+    });
+
+    var diagramsBefore = diagrams.length;
     findDiagrams();
-    if (diagrams.length === 0) return;
+    // nothing new to draw (a swap can bring in content without diagrams)
+    if (diagrams.length === diagramsBefore) return;
 
-    // Wait for the site's fonts, as Mermaid sizes boxes by measuring their text
-    if (document.fonts && document.fonts.ready) {
-      document.fonts.ready.then(drawAndWatch);
-    } else {
-      drawAndWatch();
+    loadMermaid(function () {
+      // Draw every diagram again, including new ones (drawInCurrentMode skips drawing when the mode hasn't changed)
+      drawnDark = null;
+
+      // Wait for the site's fonts, as Mermaid sizes boxes by measuring their text
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(drawAndWatch);
+      } else {
+        drawAndWatch();
+      }
+    });
+  }
+
+  /**
+   * Runs whenDone once Mermaid is ready, loading its script first if this page didn't include it (a page swapped in
+   * with HTMX after one without diagrams).
+   */
+  function loadMermaid(whenDone) {
+    if (window.mermaid) {
+      whenDone();
+      return;
     }
+    var script = document.createElement('script');
+    script.src = settings.mermaidUrl;
+    script.onload = whenDone;
+    document.head.appendChild(script);
   }
 
   /**
@@ -232,6 +265,9 @@
    */
   function drawAndWatch() {
     drawDiagrams();
+
+    if (watching) return;
+    watching = true;
 
     // Redraw when the theme's switch changes data-theme or the "dark" class on <html>...
     new MutationObserver(drawDiagrams).observe(html, {
@@ -250,4 +286,7 @@
   } else {
     start();
   }
+
+  // After HTMX swaps in a page, draw its diagrams (htmx:afterSettle comes once the new content is in place)
+  document.addEventListener('htmx:afterSettle', start);
 })();

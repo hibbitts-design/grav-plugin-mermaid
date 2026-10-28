@@ -114,13 +114,20 @@ class MermaidPlugin extends Plugin
      *
      * This checks the whole page rather than its own content, so diagrams shown from other pages (such as in a
      * full text or print view) are drawn too.
+     *
+     * On a site that swaps pages in with HTMX, every page gets the small start-up script, as a page swapped in later
+     * may have a diagram; Mermaid itself then loads only when one does.
      */
     public function onOutputGenerated()
     {
         $output = $this->grav->output;
+        if (!is_string($output)) {
+            return;
+        }
 
-        // A ```mermaid block becomes <code class="language-mermaid">; no such block means nothing to do
-        if (!is_string($output) || strpos($output, 'language-mermaid') === false) {
+        // A ```mermaid block becomes <code class="language-mermaid">
+        $has_diagram = strpos($output, 'language-mermaid') !== false;
+        if (!$has_diagram && !$this->swapsPages()) {
             return;
         }
 
@@ -133,7 +140,7 @@ class MermaidPlugin extends Plugin
         // Insert (a length of 0 replaces nothing) before the last </body> only, in case the page shows HTML with
         // its own </body>
         $body_end = strripos($output, '</body>');
-        $output = substr_replace($output, $this->pageAdditions(), $body_end, 0);
+        $output = substr_replace($output, $this->pageAdditions($has_diagram), $body_end, 0);
 
         // Hide the diagram code from the start, so it doesn't show while Mermaid loads. This goes before the
         // first </head> (the page's own), as styles at the end of the page arrive too late.
@@ -164,9 +171,18 @@ HTML;
     }
 
     /**
-     * The styles and scripts added to a page with a diagram.
+     * Whether the theme swaps pages in with HTMX rather than loading each one in full (Helios's HTMX setting).
      */
-    protected function pageAdditions()
+    protected function swapsPages()
+    {
+        return (bool) $this->config->get('theme.htmx.enabled', false);
+    }
+
+    /**
+     * The styles and scripts added to a page. Mermaid itself only when the page has a diagram; otherwise
+     * js/mermaid-init.js loads it if a page swapped in later has one.
+     */
+    protected function pageAdditions($has_diagram)
     {
         // ?v= makes browsers fetch a new copy after a change
         $mermaid_js = Utils::url('plugin://mermaid/js/mermaid.min.js') . '?v=' . self::MERMAID_VERSION;
@@ -180,6 +196,7 @@ HTML;
             'look' => $this->config->get('plugins.mermaid.look', 'classic'),
             'font' => $this->config->get('plugins.mermaid.font', 'site'),
             'width' => $this->config->get('plugins.mermaid.width', 'fit'),
+            'mermaidUrl' => $mermaid_js,
         ];
 
         $align = $this->config->get('plugins.mermaid.align', 'center');
@@ -209,10 +226,15 @@ HTML;
 }
 CSS;
 
+        $mermaid_script = '';
+        if ($has_diagram) {
+            $mermaid_script = '<script src="' . $mermaid_js . '"></script>' . "\n";
+        }
+
         return "\n<style>\n" . $css . "\n</style>\n"
              // JSON_HEX_TAG stops a setting from ending the <script> early
-             . '<script>window.GravMermaid = ' . json_encode($settings, JSON_HEX_TAG) . ";</script>\n"
-             . '<script src="' . $mermaid_js . '"></script>' . "\n"
+             . '<script>window.GravMermaid = ' . json_encode($settings, JSON_HEX_TAG | JSON_UNESCAPED_SLASHES) . ";</script>\n"
+             . $mermaid_script
              . '<script src="' . $init_js . '"></script>' . "\n";
     }
 

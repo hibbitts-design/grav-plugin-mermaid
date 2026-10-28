@@ -74,6 +74,8 @@ Diagrams follow the theme with no setup needed:
 
 For a theme with its own switch that isn't followed, set **Dark Mode** to Always Dark or Always Light. Diagrams always print in light mode, ready for white paper.
 
+On sites that swap pages in with HTMX, such as Helios with its HTMX setting on, diagrams are drawn on each page as it's swapped in. Mermaid itself still only loads once a page has a diagram.
+
 ## Settings
 
 - **Diagram Alignment** – left, centre (the default) or right
